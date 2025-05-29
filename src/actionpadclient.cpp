@@ -240,6 +240,9 @@ void ActionPadClient::processMessage(const QJsonObject &message)
             QString name = actionObj["name"].toString();
             QString icon = actionObj["icon"].toString();
 
+            qDebug() << "Received action:" << name << "with icon:"
+                     << (icon.length() > 50 ? icon.left(50) + "..." : icon);
+
             m_actionModel.addAction(id, name, icon);
         }
 

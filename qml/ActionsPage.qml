@@ -104,10 +104,22 @@ Page {
                             Layout.preferredWidth: 48
                             Layout.preferredHeight: 48
                             source: {
-                                if (model.icon === "placeholder") {
+                                if (model.icon === "placeholder" || !model.icon) {
                                     return "qrc:/icons/placeholder.png"
                                 }
-                                return model.icon
+
+                                // Handle data URIs (base64 encoded images)
+                                if (model.icon.startsWith("data:")) {
+                                    return model.icon
+                                }
+
+                                // Handle resource paths
+                                if (model.icon.startsWith("qrc:/")) {
+                                    return model.icon
+                                }
+
+                                // If we get here, something's wrong - use placeholder
+                                return "qrc:/icons/placeholder.png"
                             }
                             color: model.icon === "placeholder" ?
                                    (UserSettings.darkMode ? "white" : "black") : "transparent"
