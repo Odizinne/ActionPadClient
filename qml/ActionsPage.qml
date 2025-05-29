@@ -103,8 +103,9 @@ Page {
                             Layout.alignment: Qt.AlignHCenter
                             Layout.preferredWidth: 48
                             Layout.preferredHeight: 48
-                            source: model.icon
-                            color: UserSettings.darkMode ? "white" : "white"
+                            source: model.icon === "placeholder" ? "qrc:/icons/placeholder.png" : model.icon
+                            color: model.icon === "placeholder" ?
+                                   (UserSettings.darkMode ? "white" : "black") : "transparent"
                             fillMode: Image.PreserveAspectFit
                         }
 
