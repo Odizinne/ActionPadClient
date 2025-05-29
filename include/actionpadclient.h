@@ -8,6 +8,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QTimer>
+#include <QQmlEngine>
 
 struct ClientAction {
     QString name;
@@ -18,6 +19,7 @@ struct ClientAction {
 class ActionModel : public QAbstractListModel
 {
     Q_OBJECT
+    QML_ELEMENT
 
 public:
     enum ActionRoles {
@@ -43,6 +45,8 @@ private:
 class ActionPadClient : public QObject
 {
     Q_OBJECT
+    QML_ELEMENT
+    QML_SINGLETON
     Q_PROPERTY(bool isConnected READ isConnected NOTIFY isConnectedChanged)
     Q_PROPERTY(QString serverAddress READ serverAddress WRITE setServerAddress NOTIFY serverAddressChanged)
     Q_PROPERTY(int serverPort READ serverPort WRITE setServerPort NOTIFY serverPortChanged)
@@ -50,7 +54,8 @@ class ActionPadClient : public QObject
     Q_PROPERTY(ActionModel* actionModel READ actionModel CONSTANT)
 
 public:
-    explicit ActionPadClient(QObject *parent = nullptr);
+    static ActionPadClient* create(QQmlEngine *qmlEngine, QJSEngine *jsEngine);
+    static ActionPadClient* instance();
 
     bool isConnected() const { return m_socket->state() == QTcpSocket::ConnectedState; }
     QString serverAddress() const { return m_serverAddress; }
@@ -81,12 +86,14 @@ private slots:
     void onReconnectTimer();
 
 private:
+    explicit ActionPadClient(QObject *parent = nullptr);
     void processMessage(const QJsonObject &message);
     void sendMessage(const QJsonObject &message);
     void setConnectionStatus(const QString &status);
     void startReconnectTimer();
     void stopReconnectTimer();
 
+    static ActionPadClient* m_instance;
     QTcpSocket *m_socket;
     ActionModel m_actionModel;
     QString m_serverAddress;

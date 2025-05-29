@@ -8,7 +8,6 @@ Page {
     id: root
     objectName: "actionPage"
 
-    property var client
     signal navigateToSettings()
     signal openDrawer()
     Material.background: UserSettings.darkMode ? "#1C1C1C" : "#E3E3E3"
@@ -36,7 +35,7 @@ Page {
 
     Label {
         text: "Disconnected"
-        visible: client.connectionStatus === "Disconnected"
+        visible: ActionPadClient.connectionStatus === "Disconnected"
         anchors.centerIn: parent
     }
 
@@ -55,7 +54,7 @@ Page {
                 anchors.fill: parent
                 cellWidth: 120
                 cellHeight: 120
-                model: client ? client.actionModel : null
+                model: ActionPadClient ? ActionPadClient.actionModel : null
 
                 add: Transition {
                     NumberAnimation {
@@ -90,8 +89,8 @@ Page {
                     height: actionsGrid.cellHeight - 10
                     Material.roundedScale: Material.SmallScale
                     onClicked: {
-                        if (client && client.isConnected) {
-                            client.pressAction(model.actionId)
+                        if (ActionPadClient && ActionPadClient.isConnected) {
+                            ActionPadClient.pressAction(model.actionId)
                         }
                     }
 

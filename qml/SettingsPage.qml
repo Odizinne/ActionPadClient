@@ -7,7 +7,6 @@ import Odizinne.ActionPadClient
 Page {
     id: root
 
-    property var client
     signal navigateBack()
     property int delegateHeight: 60
     Material.background: UserSettings.darkMode ? "#1C1C1C" : "#E3E3E3"
@@ -79,7 +78,7 @@ Page {
                         text: UserSettings.savedIP
                         placeholderText: "192.168.1.100"
                         onTextChanged: {
-                            if (client) client.serverAddress = text
+                            if (ActionPadClient) ActionPadClient.serverAddress = text
                             UserSettings.savedIP = text
                         }
                     }
@@ -102,8 +101,8 @@ Page {
                         placeholderText: "8080"
                         validator: IntValidator { bottom: 1; top: 65535 }
                         onTextChanged: {
-                            if (text.length > 0 && client) {
-                                client.serverPort = parseInt(text)
+                            if (text.length > 0 && ActionPadClient) {
+                                ActionPadClient.serverPort = parseInt(text)
                                 UserSettings.savedPort = text
                             }
                         }
@@ -120,8 +119,8 @@ Page {
                     }
 
                     Label {
-                        text: client ? client.connectionStatus : "Disconnected"
-                        color: client && client.isConnected ? "green" : "red"
+                        text: ActionPadClient ? ActionPadClient.connectionStatus : "Disconnected"
+                        color: ActionPadClient && ActionPadClient.isConnected ? "green" : "red"
                     }
                 }
 
@@ -129,14 +128,14 @@ Page {
                     Layout.fillWidth: true
                     Layout.leftMargin: 16
                     Layout.rightMargin: 16
-                    text: client && client.isConnected ? "Disconnect" : "Connect"
+                    text: ActionPadClient && ActionPadClient.isConnected ? "Disconnect" : "Connect"
 
                     onClicked: {
-                        if (client) {
-                            if (client.isConnected) {
-                                client.disconnectFromServer()
+                        if (ActionPadClient) {
+                            if (ActionPadClient.isConnected) {
+                                ActionPadClient.disconnectFromServer()
                             } else {
-                                client.connectToServer()
+                                ActionPadClient.connectToServer()
                             }
                         }
                     }

@@ -1,7 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include "actionpadclient.h"
 
 int main(int argc, char *argv[])
 {
@@ -9,10 +8,6 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     app.setOrganizationName("Odizinne");
     app.setApplicationName("ActionPadClient");
-
-    qmlRegisterType<ActionPadClient>("Odizinne.ActionPadClient", 1, 0, "ActionPadClient");
-    qmlRegisterType<ActionModel>("Odizinne.ActionPadClient", 1, 0, "ActionModel");
-
     QQmlApplicationEngine engine;
     engine.loadFromModule("Odizinne.ActionPadClient", "Main");
 

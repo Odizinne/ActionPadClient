@@ -8,6 +8,27 @@ ActionModel::ActionModel(QObject *parent) : QAbstractListModel(parent)
 {
 }
 
+ActionPadClient* ActionPadClient::m_instance = nullptr;
+
+ActionPadClient* ActionPadClient::create(QQmlEngine *qmlEngine, QJSEngine *jsEngine)
+{
+    Q_UNUSED(qmlEngine)
+    Q_UNUSED(jsEngine)
+
+    if (!m_instance) {
+        m_instance = new ActionPadClient();
+    }
+    return m_instance;
+}
+
+ActionPadClient* ActionPadClient::instance()
+{
+    if (!m_instance) {
+        m_instance = new ActionPadClient();
+    }
+    return m_instance;
+}
+
 void ActionModel::clearActions()
 {
     beginResetModel();

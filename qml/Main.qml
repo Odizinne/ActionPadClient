@@ -60,10 +60,6 @@ ApplicationWindow {
         }
     }
 
-    ActionPadClient {
-        id: client
-    }
-
     StackView {
         id: stackView
         anchors.fill: parent
@@ -73,8 +69,6 @@ ApplicationWindow {
     ActionsPage {
         id: actionPage
         visible: false
-        client: client
-
         onNavigateToSettings: stackView.push(settingsPage)
         onOpenDrawer: drawer.open()
     }
@@ -82,8 +76,6 @@ ApplicationWindow {
     SettingsPage {
         id: settingsPage
         visible: false
-        client: client
-
         onNavigateBack: stackView.pop()
     }
 
