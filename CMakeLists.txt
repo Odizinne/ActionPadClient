@@ -31,14 +31,25 @@ qt_add_executable(${CMAKE_PROJECT_NAME}
     resources/icons/icons.qrc
 )
 
+set(QML_FILES
+    qml/Main.qml
+    qml/ActionsPage.qml
+    qml/SettingsPage.qml
+    qml/ScrollingArea.qml
+)
+
+set(QML_SINGLETONS
+    qml/Singletons/UserSettings.qml
+)
+
+set_source_files_properties(${QML_SINGLETONS}
+    PROPERTIES QT_QML_SINGLETON_TYPE TRUE
+)
+
 qt_add_qml_module(${CMAKE_PROJECT_NAME}
     URI Odizinne.ActionPadClient
     VERSION 1.0
-    QML_FILES
-        qml/Main.qml
-        qml/ActionsPage.qml
-        qml/SettingsPage.qml
-        qml/ScrollingArea.qml
+    QML_FILES ${QML_FILES} ${QML_SINGLETONS}
 )
 
 set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES

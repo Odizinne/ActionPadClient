@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
+import Odizinne.ActionPadClient
 
 Page {
     id: root
@@ -62,9 +63,12 @@ Page {
                     TextField {
                         id: serverAddressField
                         Layout.fillWidth: true
-                        text: client ? client.serverAddress : ""
+                        text: UserSettings.savedIP
                         placeholderText: "192.168.1.100"
-                        onTextChanged: if (client) client.serverAddress = text
+                        onTextChanged: {
+                            if (client) client.serverAddress = text
+                            UserSettings.savedIP = text
+                        }
                     }
                 }
 
@@ -81,12 +85,13 @@ Page {
                     TextField {
                         id: serverPortField
                         Layout.fillWidth: true
-                        text: client ? client.serverPort.toString() : ""
+                        text: UserSettings.savedPort
                         placeholderText: "8080"
                         validator: IntValidator { bottom: 1; top: 65535 }
                         onTextChanged: {
                             if (text.length > 0 && client) {
                                 client.serverPort = parseInt(text)
+                                UserSettings.savedPort = text
                             }
                         }
                     }
