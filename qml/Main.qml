@@ -8,6 +8,8 @@ ApplicationWindow {
     height: 640
     visible: true
     title: qsTr("Action Pad")
+    color: UserSettings.darkMode ? "#1C1C1C" : "#E3E3E3"
+    Material.theme: UserSettings.darkMode ? Material.Dark : Material.Light
 
     property bool backPressedOnce: false
 
@@ -35,7 +37,7 @@ ApplicationWindow {
         id: exitTimer
         interval: 2000
         onTriggered: {
-            root.backPressedOnce = false
+            window.backPressedOnce = false
             exitTooltip.hide()
         }
     }
@@ -60,32 +62,6 @@ ApplicationWindow {
 
     ActionPadClient {
         id: client
-
-        onActionsReceived: function(count) {
-            if (count > 0) {
-                if (stackView.currentItem && stackView.currentItem.objectName === "actionPage") {
-                    stackView.currentItem.updateStatus("Connected - " + count + " actions loaded", "green")
-                }
-            } else {
-                if (stackView.currentItem && stackView.currentItem.objectName === "actionPage") {
-                    stackView.currentItem.updateStatus("Connected - No actions available", "orange")
-                }
-            }
-        }
-
-        onActionUpdated: {
-            if (stackView.currentItem && stackView.currentItem.objectName === "actionPage") {
-                stackView.currentItem.showUpdateIndicator()
-            }
-        }
-
-        onConnectionStatusChanged: {
-            if (!client.isConnected) {
-                if (stackView.currentItem && stackView.currentItem.objectName === "actionPage") {
-                    stackView.currentItem.updateStatus(client.connectionStatus, "red")
-                }
-            }
-        }
     }
 
     StackView {
@@ -100,6 +76,7 @@ ApplicationWindow {
         client: client
 
         onNavigateToSettings: stackView.push(settingsPage)
+        onOpenDrawer: drawer.open()
     }
 
     SettingsPage {

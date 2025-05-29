@@ -1,6 +1,7 @@
 import QtQuick
-import QtQuick.Controls.Material
 import QtQuick.Layouts
+import QtQuick.Controls.Material
+import QtQuick.Controls.impl
 import Odizinne.ActionPadClient
 
 Page {
@@ -8,12 +9,18 @@ Page {
 
     property var client
     signal navigateBack()
+    property int delegateHeight: 60
+    Material.background: UserSettings.darkMode ? "#1C1C1C" : "#E3E3E3"
 
     header: ToolBar {
+        Material.elevation: 6
+        Material.background: UserSettings.darkMode ? "#2B2B2B" : "#FFFFFF"
+
         ToolButton {
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
             icon.source: "qrc:/icons/back.svg"
+            icon.color: UserSettings.darkMode ? "white" : "black"
             icon.width: 18
             icon.height: 18
             onClicked: root.navigateBack()
@@ -36,33 +43,39 @@ Page {
         Item {
             id: textContainer
             width: scrollArea.width
-            height: mainLyt.height + 20
+            //height: mainCol.height + 20
             anchors.top: parent.top
             anchors.topMargin: 10
 
             ColumnLayout {
-                id: mainLyt
-                anchors.left: parent.left
-                anchors.right: parent.right
-                anchors.leftMargin: 15
-                anchors.rightMargin: 15
-                anchors.top: parent.top
-                anchors.topMargin: 10
-                spacing: 15
+                id: mainCol
+                anchors.fill: parent
+                spacing: 10
 
-                // Server IP
-                ColumnLayout {
+                Label {
+                    text: qsTr("Server config")
+                    font.pixelSize: 14
+                    opacity: 0.6
+                    Layout.preferredHeight: 48
+                    Layout.leftMargin: 16
+                    verticalAlignment: Text.AlignBottom
+                    bottomPadding: 8
+                    color: UserSettings.darkMode ? "white" : "black"
+                }
+
+                Column {
                     Layout.fillWidth: true
+                    Layout.leftMargin: 16
+                    Layout.rightMargin: 16
                     spacing: 5
 
                     Label {
-                        text: "Server IP Address"
-                        font.bold: true
+                        text: "IP"
                     }
 
                     TextField {
                         id: serverAddressField
-                        Layout.fillWidth: true
+                        width: parent.width
                         text: UserSettings.savedIP
                         placeholderText: "192.168.1.100"
                         onTextChanged: {
@@ -72,19 +85,19 @@ Page {
                     }
                 }
 
-                // Server Port
-                ColumnLayout {
+                Column {
                     Layout.fillWidth: true
+                    Layout.leftMargin: 16
+                    Layout.rightMargin: 16
                     spacing: 5
 
                     Label {
-                        text: "Server Port"
-                        font.bold: true
+                        text: "Port"
                     }
 
                     TextField {
                         id: serverPortField
-                        Layout.fillWidth: true
+                        width: parent.width
                         text: UserSettings.savedPort
                         placeholderText: "8080"
                         validator: IntValidator { bottom: 1; top: 65535 }
@@ -97,48 +110,105 @@ Page {
                     }
                 }
 
-                // Connection Status
-                Rectangle {
+                RowLayout {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: 60
-                    color: "#f8f8f8"
-                    border.color: "#ddd"
-                    border.width: 1
-                    radius: 6
+                    Layout.leftMargin: 16
+                    Layout.rightMargin: 16
+                    Label {
+                        Layout.fillWidth: true
+                        text: "Connection Status:"
+                    }
 
-                    ColumnLayout {
-                        anchors.fill: parent
-                        anchors.margins: 10
+                    Label {
+                        text: client ? client.connectionStatus : "Disconnected"
+                        color: client && client.isConnected ? "green" : "red"
+                    }
+                }
 
-                        Label {
-                            text: "Connection Status"
-                            font.bold: true
-                            color: "#666"
-                        }
+                Button {
+                    Layout.fillWidth: true
+                    Layout.leftMargin: 16
+                    Layout.rightMargin: 16
+                    text: client && client.isConnected ? "Disconnect" : "Connect"
 
-                        Label {
-                            text: client ? client.connectionStatus : "Disconnected"
-                            color: client && client.isConnected ? "green" : "red"
-                            font.pixelSize: 14
+                    onClicked: {
+                        if (client) {
+                            if (client.isConnected) {
+                                client.disconnectFromServer()
+                            } else {
+                                client.connectToServer()
+                            }
                         }
                     }
                 }
 
-                // Connection Controls
-                RowLayout {
+                MenuSeparator {
                     Layout.fillWidth: true
+                }
 
-                    Button {
-                        text: client && client.isConnected ? "Disconnect" : "Connect"
-                        Layout.fillWidth: true
+                Label {
+                    text: qsTr("Application config")
+                    font.pixelSize: 14
+                    opacity: 0.6
+                    Layout.preferredHeight: 48
+                    Layout.leftMargin: 16
+                    verticalAlignment: Text.AlignBottom
+                    bottomPadding: 8
+                    color: UserSettings.darkMode ? "white" : "black"
+                }
 
-                        onClicked: {
-                            if (client) {
-                                if (client.isConnected) {
-                                    client.disconnectFromServer()
-                                } else {
-                                    client.connectToServer()
+                SwitchDelegate {
+                    id: darkModeSwitch
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: root.delegateHeight
+                    text: qsTr("Dark mode")
+                    checked: UserSettings.darkMode
+                    onClicked: UserSettings.darkMode = checked
+
+                    Item {
+                        anchors.right: parent.right
+                        anchors.rightMargin: 70
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 20
+                        height: 20
+
+                        IconImage {
+                            anchors.fill: parent
+                            source: "qrc:/icons/sun.svg"
+                            color: "black"
+                            opacity: !darkModeSwitch.checked ? 1 : 0
+                            rotation: darkModeSwitch.checked ? 360 : 0
+                            mipmap: true
+
+                            Behavior on rotation {
+                                NumberAnimation {
+                                    duration: 500
+                                    easing.type: Easing.OutQuad
                                 }
+                            }
+
+                            Behavior on opacity {
+                                NumberAnimation { duration: 500 }
+                            }
+                        }
+
+                        IconImage {
+                            anchors.fill: parent
+                            source: "qrc:/icons/moon.svg"
+                            color: "white"
+                            opacity: darkModeSwitch.checked ? 1 : 0
+                            rotation: darkModeSwitch.checked ? 360 : 0
+                            mipmap: true
+
+                            Behavior on rotation {
+                                NumberAnimation {
+                                    duration: 500
+                                    easing.type: Easing.OutQuad
+                                }
+                            }
+
+                            Behavior on opacity {
+                                NumberAnimation { duration: 100 }
                             }
                         }
                     }
@@ -147,3 +217,4 @@ Page {
         }
     }
 }
+

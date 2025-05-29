@@ -4,5 +4,7 @@
         <file>back.svg</file>
         <file>menu.svg</file>
         <file>settings.svg</file>
+        <file>moon.svg</file>
+        <file>sun.svg</file>
     </qresource>
 </RCC>

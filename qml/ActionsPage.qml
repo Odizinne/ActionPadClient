@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Layouts
+import Odizinne.ActionPadClient
 
 Page {
     id: root
@@ -8,25 +9,20 @@ Page {
 
     property var client
     signal navigateToSettings()
-
-    function updateStatus(text, color) {
-        statusLabel.text = text
-        statusLabel.color = color
-    }
-
-    function showUpdateIndicator() {
-        updateIndicator.opacity = 1.0
-        updateFadeOut.start()
-    }
+    signal openDrawer()
+    Material.background: UserSettings.darkMode ? "#1C1C1C" : "#E3E3E3"
 
     header: ToolBar {
+        Material.elevation: 6
+        Material.background: UserSettings.darkMode ? "#2B2B2B" : "#FFFFFF"
+
         ToolButton {
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
             icon.source: "qrc:/icons/menu.svg"
             icon.width: 18
             icon.height: 18
-            onClicked: window.appDrawer.open()
+            onClicked: root.openDrawer()
         }
 
         Label {
@@ -37,50 +33,16 @@ Page {
         }
     }
 
+    Label {
+        text: "Disconnected"
+        visible: client.connectionStatus === "Disconnected"
+        anchors.centerIn: parent
+    }
+
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 10
         spacing: 10
-
-        // Status Bar
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 40
-            color: "#f5f5f5"
-            border.color: "#ddd"
-            border.width: 1
-            radius: 4
-
-            RowLayout {
-                anchors.fill: parent
-                anchors.margins: 10
-
-                Label {
-                    id: statusLabel
-                    text: client ? client.connectionStatus : "Disconnected"
-                    color: client && client.isConnected ? "green" : "red"
-                    Layout.fillWidth: true
-                }
-
-                Rectangle {
-                    id: updateIndicator
-                    width: 12
-                    height: 12
-                    radius: 6
-                    color: "lightblue"
-                    opacity: 0
-
-                    NumberAnimation {
-                        id: updateFadeOut
-                        target: updateIndicator
-                        property: "opacity"
-                        from: 1.0
-                        to: 0
-                        duration: 1000
-                    }
-                }
-            }
-        }
 
         // Actions Grid
         ScrollView {
