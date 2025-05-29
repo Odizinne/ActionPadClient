@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls.Material
+import QtQuick.Controls.impl
 import QtQuick.Layouts
 import Odizinne.ActionPadClient
 
@@ -84,79 +85,36 @@ Page {
                     }
                 }
 
-                delegate: Rectangle {
+                delegate: Button {
                     width: actionsGrid.cellWidth - 10
                     height: actionsGrid.cellHeight - 10
-                    radius: 8
-                    color: mouseArea.pressed ? "#e0e0e0" : "#f5f5f5"
-                    border.color: "#ddd"
-                    border.width: 1
+                    Material.roundedScale: Material.SmallScale
+                    onClicked: {
+                        if (client && client.isConnected) {
+                            client.pressAction(model.actionId)
+                        }
+                    }
 
                     ColumnLayout {
                         anchors.fill: parent
                         anchors.margins: 10
                         spacing: 5
 
-                        Image {
+                        IconImage {
                             Layout.alignment: Qt.AlignHCenter
                             Layout.preferredWidth: 48
                             Layout.preferredHeight: 48
                             source: model.icon
+                            color: UserSettings.darkMode ? "white" : "white"
                             fillMode: Image.PreserveAspectFit
-
-                            Rectangle {
-                                anchors.fill: parent
-                                color: "transparent"
-                                border.color: "#ddd"
-                                border.width: 1
-                                visible: parent.status === Image.Error
-
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "?"
-                                    color: "#999"
-                                    font.pixelSize: 24
-                                }
-                            }
                         }
 
-                        Text {
+                        Label {
                             Layout.fillWidth: true
                             text: model.name
                             horizontalAlignment: Text.AlignHCenter
                             wrapMode: Text.WordWrap
                             font.pixelSize: 12
-                            color: "#333"
-                        }
-                    }
-
-                    MouseArea {
-                        id: mouseArea
-                        anchors.fill: parent
-                        onClicked: {
-                            if (client && client.isConnected) {
-                                client.pressAction(model.actionId)
-
-                                feedbackRect.opacity = 0.5
-                                feedbackAnimation.start()
-                            }
-                        }
-                    }
-
-                    Rectangle {
-                        id: feedbackRect
-                        anchors.fill: parent
-                        radius: parent.radius
-                        color: "lightblue"
-                        opacity: 0
-
-                        NumberAnimation {
-                            id: feedbackAnimation
-                            target: feedbackRect
-                            property: "opacity"
-                            from: 0.5
-                            to: 0
-                            duration: 200
                         }
                     }
                 }
