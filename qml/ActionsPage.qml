@@ -1,3 +1,5 @@
+pragma ComponentBehavior: Bound
+
 import QtQuick
 import QtQuick.Controls.Material
 import QtQuick.Controls.impl
@@ -85,9 +87,11 @@ Page {
                 }
 
                 delegate: Button {
+                    id: actionButton
                     width: actionsGrid.cellWidth - 10
                     height: actionsGrid.cellHeight - 10
                     Material.roundedScale: Material.SmallScale
+                    required property var model
                     onClicked: {
                         if (ActionPadClient && ActionPadClient.isConnected) {
                             ActionPadClient.pressAction(model.actionId)
@@ -104,31 +108,31 @@ Page {
                             Layout.preferredWidth: 48
                             Layout.preferredHeight: 48
                             source: {
-                                if (model.icon === "placeholder" || !model.icon) {
+                                if (actionButton.model.icon === "placeholder" || !actionButton.model.icon) {
                                     return "qrc:/icons/placeholder.png"
                                 }
 
                                 // Handle data URIs (base64 encoded images)
-                                if (model.icon.startsWith("data:")) {
-                                    return model.icon
+                                if (actionButton.model.icon.startsWith("data:")) {
+                                    return actionButton.model.icon
                                 }
 
                                 // Handle resource paths
-                                if (model.icon.startsWith("qrc:/")) {
-                                    return model.icon
+                                if (actionButton.model.icon.startsWith("qrc:/")) {
+                                    return actionButton.model.icon
                                 }
 
                                 // If we get here, something's wrong - use placeholder
                                 return "qrc:/icons/placeholder.png"
                             }
-                            color: model.icon === "placeholder" ?
+                            color: actionButton.model.icon === "placeholder" ?
                                    (UserSettings.darkMode ? "white" : "black") : "transparent"
                             fillMode: Image.PreserveAspectFit
                         }
 
                         Label {
                             Layout.fillWidth: true
-                            text: model.name
+                            text: actionButton.model.name
                             horizontalAlignment: Text.AlignHCenter
                             wrapMode: Text.WordWrap
                             font.pixelSize: 12
