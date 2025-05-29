@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>placeholder.png</file>
+        <file>back.svg</file>
+        <file>menu.svg</file>
+        <file>settings.svg</file>
+    </qresource>
+</RCC>
